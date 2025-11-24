@@ -1,8 +1,12 @@
-const CACHE_NAME = 'office-tracker-v1';
+const CACHE_NAME = 'office-tracker-v3-vanilla';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/style.css',
+  '/app.js',
+  'https://cdn.tailwindcss.com',
+  'https://unpkg.com/lucide@latest'
 ];
 
 self.addEventListener('install', (event) => {
