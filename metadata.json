@@ -1,0 +1,7 @@
+{
+  "name": "OfficeTrack PWA",
+  "description": "Automated 9-hour workday tracker with GPS and Manual modes.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
