@@ -1,0 +1,66 @@
+name: CI Workflow
+
+# Trigger the workflow on push events to the main branch or on pull requests to the main branch.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Define the jobs that will run as part of this workflow.
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    # Define the steps to be executed in this job.
+    steps:
+      # 1. Checkout the repository code.
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js environment.
+      #    This uses version 20.x as a stable, widely supported version.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          # Cache npm dependencies to speed up subsequent runs.
+          cache: 'npm'
+
+      # 3. Install project dependencies.
+      #    Using npm ci for cleaner, faster installs based on package-lock.json.
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Run Linters and Formatters.
+      #    Biome is specified in the Apex standards for speed and consistency.
+      #    This step ensures code style compliance.
+      - name: Lint and Format Check
+        run: npm run lint && npm run format:check
+        # The 'format:check' script should be defined in package.json to run biome check
+
+      # 5. Run Unit Tests.
+      #    Vitest is the specified unit testing framework.
+      #    This step executes all defined unit tests.
+      - name: Run Unit Tests
+        run: npm run test:unit
+        # The 'test:unit' script should be defined in package.json to run vitest
+
+      # 6. Build the application.
+      #    Vite is the specified build tool.
+      #    This step creates the production-ready build.
+      - name: Build Application
+        run: npm run build
+        # The 'build' script should be defined in package.json to run vite build
+        env:
+          # Set any necessary environment variables for the build process
+          NODE_ENV: production
+
+      # 7. Upload build artifacts (optional but recommended).
+      #    This allows artifacts to be downloaded from the Actions UI or used in subsequent jobs.
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: "dist-artifact"
+          path: "dist/"
+          retention-days: 7
